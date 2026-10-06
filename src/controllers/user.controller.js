@@ -1,6 +1,6 @@
 import User from "../models/user.models.js";
 
-//Validar los datos recibidos antes de añadir o editar un usuario:
+// POST /api/users: Crear un nuevo usuario.
 export const createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -20,7 +20,7 @@ export const createUser = async (req, res) => {
     if (
       !email ||
       typeof email !== "string" ||
-      email.trim() == "" ||
+      email.trim() === "" ||
       email.length > 100
     ) {
       return res.status(400).json({
@@ -32,7 +32,7 @@ export const createUser = async (req, res) => {
     if (
       !password ||
       typeof password !== "string" ||
-      password.trim() == "" ||
+      password.trim() === "" ||
       password.length > 100
     ) {
       return res.status(400).json({
@@ -41,7 +41,6 @@ export const createUser = async (req, res) => {
       });
     }
 
-    //email: Debe ser una cadena única en la base de datos
     const existeUser = await User.findOne({ where: { email: email.trim() } });
     if (existeUser) {
       return res.status(400).json({
@@ -49,22 +48,117 @@ export const createUser = async (req, res) => {
       });
     }
 
-    //Creacion de usuario nuevo
     const nuevoUser = await User.create({
       name: name.trim(),
       email: email.trim(),
       password,
     });
 
-    //Se le muestra un mensaje del que el usuario se creo correctamente
     return res.status(201).json({
-      message: "Usuario creado exitosamente ",
+      message: "Usuario creado exitosamente",
       data: nuevoUser,
     });
   } catch (error) {
     console.error("Error al crear el usuario:", error);
     return res.status(500).json({
       message: "Error interno del servidor al crear usuario",
+    });
+  }
+};
+
+// GET /api/users: Obtener todos los usuarios.
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.findAll();
+    return res.status(200).json({
+      message: "Usuarios obtenidos exitosamente",
+      data: users,
+    });
+  } catch (error) {
+    console.error("error al obtener usuarios", error);
+    return res.status(500).json({
+      message: "error interno del servidor",
+    });
+  }
+};
+
+// GET /api/users/:id: Obtener un usuario específico por su ID.
+export const getUsersById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "usuario no encontrado",
+      });
+    }
+
+    return res.status(200).json({
+      message: "usuario obtenido exitosamente",
+      data: user,
+    });
+  } catch (error) {
+    console.error("error al obtener usuario", error);
+    return res.status(500).json({
+      message: "error interno del servidor",
+    });
+  }
+};
+
+// PUT /api/users/:id: Actualizar un usuario específico por su ID.
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({
+        message: "usuario no encontrado",
+      });
+    }
+
+    // Actualizamos solo las propiedades que vienen en la petición
+    if (name) user.name = name.trim();
+    if (email) user.email = email.trim();
+    if (password) user.password = password;
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "usuario actualizado exitosamente",
+      data: user,
+    });
+  } catch (error) {
+    console.error("error al actualizar el usuario", error);
+    return res.status(500).json({
+      message: "error interno del servidor",
+    });
+  }
+};
+
+// DELETE /api/users/:id: Eliminar un usuario específico por su ID.
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "usuario no encontrado",
+      });
+    }
+
+    await user.destroy();
+
+    return res.status(200).json({
+      message: "usuario eliminado exitosamente",
+    });
+  } catch (error) {
+    console.error("error al eliminar usuario", error);
+    return res.status(500).json({
+      message: "error interno del servidor",
     });
   }
 };

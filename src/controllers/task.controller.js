@@ -50,13 +50,13 @@ export const createTask = async (req, res) => {
     });
 
     return res.status(201).json({
-        message: "Se creo exitosamente la nueva tarea",
-        data: nuevoTask
+      message: "Se creo exitosamente la nueva tarea",
+      data: nuevoTask,
     });
   } catch (error) {
     console.error("Error al crear la tarea", error);
     return res.status(500).json({
-        message:"error interno"
+      message: "error interno",
     });
   }
 };
