@@ -1,9 +1,10 @@
 import Task from "../models/task.models.js";
+import User from "../models/user.models.js";
 
 // Validar los datos recibidos antes de añadir o editar una tarea:
 export const createTask = async (req, res) => {
   try {
-    const { title, description, isComplete } = req.body;
+    const { title, description, isComplete, userId } = req.body;
 
     if (
       !title ||
@@ -34,6 +35,20 @@ export const createTask = async (req, res) => {
       });
     }
 
+    //Creamos la condicion de si userId no es un numero entero
+    if (!Number.isInteger(userId)) {
+      return res.status(400).json({
+        message: "userId es obligatorio y debe ser un numero entero",
+      });
+    }
+    //Creamos la condicion en caso de que el usuario no exista.
+    const existeUserId = await User.findByPk(userId);
+    if (!existeUserId) {
+      return res.status(404).json({
+        message: "usuario no encontrado",
+      });
+    }
+
     //title: Debe ser una cadena única en la base de datos
     const existeTitle = await Task.findOne({ where: { title: title.trim() } });
     if (existeTitle) {
@@ -47,6 +62,7 @@ export const createTask = async (req, res) => {
       title: title.trim(),
       description: description.trim(),
       isComplete,
+      userId,
     });
 
     return res.status(201).json({
@@ -64,7 +80,9 @@ export const createTask = async (req, res) => {
 // GET /api/tasks: Obtener todas las tareas
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.findAll();
+    const tasks = await Task.findAll({
+      include: [{ model: User, attributes: ["id", "name", "email"] }],
+    });
     return res.status(200).json({
       message: "Tareas obtenidas exitosamente",
       data: tasks,
@@ -81,7 +99,9 @@ export const getTasks = async (req, res) => {
 export const getTaskById = async (req, res) => {
   try {
     const { id } = req.params;
-    const task = await Task.findByPk(id);
+    const task = await Task.findByPk(id, {
+      include: [{ model: User, attributes: ["id", "name", "email"] }],
+    });
 
     if (!task) {
       return res.status(404).json({

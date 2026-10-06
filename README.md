@@ -167,3 +167,35 @@ Fuente: README oficial de dotenv, sección Usage (formato del mensaje `injected 
    - Docs, Config, Options: `path`, `quiet`, `debug` y `override`.
    - FAQ: no subir el `.env`, orden de los `import`, variables ya definidas y reglas de lectura del archivo.
 2. Archivos de este proyecto: `.env.example`, `.gitignore`, `package.json`, `src/config/database.js` y `app.js`.
+
+## Relaciones entre modelos
+
+### User y Task: uno a muchos
+
+Un usuario tiene muchas tareas. Cada tarea pertenece a un solo usuario. La clave foránea userId está en la tabla Tasks y es obligatoria. Por eso no se puede crear una tarea sin un usuario que exista.
+
+### User y UserProfile: uno a uno
+
+El perfil guarda los datos personales: nombre completo, teléfono y biografía. Los datos de acceso, email y password, quedan en User. La clave foránea userId es única, así que cada usuario tiene un solo perfil.
+
+### Task y Tag: muchos a muchos
+
+Una tarea puede tener varias etiquetas. Una etiqueta puede estar en varias tareas. Se conectan mediante la tabla intermedia TaskTags, que guarda taskId y tagId.
+
+## Endpoints nuevos
+
+- POST /api/profiles y GET /api/profiles
+- POST /api/tags y GET /api/tags
+
+## Atributos que se muestran
+
+- Perfiles: id, fullName, phone y bio. Del usuario: id, name y email.
+- Tags: id y name. De cada tarea: id, title e isComplete.
+- No se muestran el password ni la tabla intermedia. El password es un dato sensible y la tabla intermedia no aporta nada al cliente.
+
+## Validaciones nuevas
+
+- No se crea una tarea ni un perfil si el usuario no existe.
+- Un usuario no puede tener más de un perfil.
+- El nombre de una etiqueta es único.
+- Si al crear una etiqueta se envían tareas, todas deben existir.
