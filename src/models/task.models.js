@@ -1,7 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
-import User from "./user.model.js";
-
 
 const Task = sequelize.define(
   "Task",
@@ -14,19 +12,16 @@ const Task = sequelize.define(
     title: {
       type: DataTypes.STRING(100),
       allowNull: false,
+      unique: true,
     },
     description: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: DataTypes.STRING(100),
+      allowNull: false,
     },
-    status: {
+    isComplete: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    id_user:{
-      type: DataTypes.INTEGER,
-      allowNull:false
-    }
   },
   {
     timestamps: false,

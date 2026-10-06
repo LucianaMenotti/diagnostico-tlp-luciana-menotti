@@ -105,7 +105,7 @@ export const getTaskById = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, isComplete } = req.body;
+    const { title, description, isComplete } = req.body || {};
 
     const task = await Task.findByPk(id);
     if (!task) {
@@ -114,9 +114,54 @@ export const updateTask = async (req, res) => {
       });
     }
 
-    if (title !== undefined) task.title = title.trim();
-    if (description !== undefined) task.description = description.trim();
-    if (isComplete !== undefined) task.isComplete = isComplete;
+    if (title !== undefined) {
+      if (
+        typeof title !== "string" ||
+        title.trim() === "" ||
+        title.length > 100
+      ) {
+        return res.status(400).json({
+          message:
+            "title debe ser texto no vacio y tener maximo de 100 caracteres",
+        });
+      }
+
+      const existeTitle = await Task.findOne({
+        where: { title: title.trim() },
+      });
+      if (existeTitle && existeTitle.id !== task.id) {
+        return res.status(400).json({
+          message: "Title existente",
+        });
+      }
+
+      task.title = title.trim();
+    }
+
+    if (description !== undefined) {
+      if (
+        typeof description !== "string" ||
+        description.trim() === "" ||
+        description.length > 100
+      ) {
+        return res.status(400).json({
+          message:
+            "description debe ser texto no vacio y tener maximo de 100 caracteres",
+        });
+      }
+
+      task.description = description.trim();
+    }
+
+    if (isComplete !== undefined) {
+      if (typeof isComplete !== "boolean") {
+        return res.status(400).json({
+          message: "isComplete debe tener un valor booleano",
+        });
+      }
+
+      task.isComplete = isComplete;
+    }
 
     await task.save();
 

@@ -1,4 +1,11 @@
 {
+  "name": "practica-tasks",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
