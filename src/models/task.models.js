@@ -22,7 +22,13 @@ const Task = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    //Creamos esta columna en la base de datos
+    userId:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
+
   {
     timestamps: false,
   },

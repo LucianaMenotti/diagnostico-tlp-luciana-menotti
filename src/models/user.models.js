@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import Task from "./task.models.js";
 
 const User = sequelize.define(
   "User",
@@ -27,5 +28,13 @@ const User = sequelize.define(
     timestamps: false,
   },
 );
+
+//uno a muchos
+User.hasMany(Task, { foreignKey: "userId" });
+//Un usuario puede tener muvhas tareas, a esas tareas se le agrega un id para saber a que usuario pertenece cada tarea
+Task.belongsTo(User, { foreignKey: "userId" });
+// Cada tarea pertenece a un solo usuario.
+
+//Es decir, Un usuario con varias tareas, pero cada tarea con un solo usuario.
 
 export default User;
