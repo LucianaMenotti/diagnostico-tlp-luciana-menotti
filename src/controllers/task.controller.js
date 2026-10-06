@@ -60,3 +60,99 @@ export const createTask = async (req, res) => {
     });
   }
 };
+
+// GET /api/tasks: Obtener todas las tareas
+export const getTasks = async (req, res) => {
+  try {
+    const tasks = await Task.findAll();
+    return res.status(200).json({
+      message: "Tareas obtenidas exitosamente",
+      data: tasks,
+    });
+  } catch (error) {
+    console.error("Error al obtener las tareas:", error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+// GET /api/tasks/:id: Obtener una tarea por su ID
+export const getTaskById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.findByPk(id);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Tarea no encontrada",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Tarea obtenida exitosamente",
+      data: task,
+    });
+  } catch (error) {
+    console.error("Error al obtener la tarea:", error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+// PUT /api/tasks/:id: Actualizar una tarea por su ID
+export const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, isComplete } = req.body;
+
+    const task = await Task.findByPk(id);
+    if (!task) {
+      return res.status(404).json({
+        message: "Tarea no encontrada",
+      });
+    }
+
+    if (title !== undefined) task.title = title.trim();
+    if (description !== undefined) task.description = description.trim();
+    if (isComplete !== undefined) task.isComplete = isComplete;
+
+    await task.save();
+
+    return res.status(200).json({
+      message: "Tarea actualizada exitosamente",
+      data: task,
+    });
+  } catch (error) {
+    console.error("Error al actualizar la tarea:", error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+// DELETE /api/tasks/:id: Eliminar una tarea por su ID
+export const deleteTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.findByPk(id);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Tarea no encontrada",
+      });
+    }
+
+    await task.destroy();
+
+    return res.status(200).json({
+      message: "Tarea eliminada exitosamente",
+    });
+  } catch (error) {
+    console.error("Error al eliminar la tarea:", error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
