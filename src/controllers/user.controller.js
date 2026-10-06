@@ -1,4 +1,5 @@
 import User from "../models/user.models.js";
+import Task from "../models/task.models.js";
 
 // POST /api/users: Crear un nuevo usuario.
 export const createUser = async (req, res) => {
@@ -69,7 +70,16 @@ export const createUser = async (req, res) => {
 // GET /api/users: Obtener todos los usuarios.
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: Task,
+          attributes: ["id", "title", "description", "isComplete"],
+        },
+      ],
+      //Aquí hay dos attributes. El de afuera es de User y con exclude saca solo el password. El de adentro es de Task y elige qué campos de cada tarea se muestran. Como un usuario tiene muchas tareas, estas salen dentro de una lista llamada Tasks.
+    });
     return res.status(200).json({
       message: "Usuarios obtenidos exitosamente",
       data: users,
@@ -86,7 +96,15 @@ export const getUsers = async (req, res) => {
 export const getUsersById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(id, {
+      attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: Task,
+          attributes: ["id", "title", "description", "isComplete"],
+        },
+      ],
+    });
 
     if (!user) {
       return res.status(404).json({
