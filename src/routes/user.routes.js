@@ -7,12 +7,20 @@ import {
   updateUser,
 } from "../controllers/user.controller.js";
 
+import { validateErrors } from "../middleware/errors.middleware.js";
+import {
+  createUserValidations,
+  updateUserValidations,
+  userIdValidation,
+} from "../middleware/user.validations.js";
+
 const router = Router();
 
-router.post("/", createUser);
+router.post("/", createUserValidations, validateErrors, createUser);
 router.get("/", getUsers);
-router.get("/:id", getUsersById);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+router.get("/:id", userIdValidation, getUsersById);
+router.put("/:id", updateUserValidations, updateUser);
+router.delete("/:id", deleteUser); 
 
 export default router;
+
