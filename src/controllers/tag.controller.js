@@ -3,49 +3,11 @@ import Task from "../models/task.models.js";
 
 export const createTag = async (req, res) => {
   try {
-    const { name, taskIds } = req.body || {};
-
-    if (
-      !name ||
-      typeof name !== "string" ||
-      name.trim() === "" ||
-      name.length > 50
-    ) {
-      return res.status(400).json({
-        message: "name es obligatorio y debe tener maximo de 50 caracteres",
-      });
-    }
-
-    if (taskIds !== undefined) {
-      if (
-        !Array.isArray(taskIds) ||
-        !taskIds.every((id) => Number.isInteger(id))
-      ) {
-        return res.status(400).json({
-          message: "taskIds debe ser una lista de numeros enteros",
-        });
-      }
-    }
-
-    const existeTag = await Tag.findOne({ where: { name: name.trim() } });
-    if (existeTag) {
-      return res.status(400).json({
-        message: "Tag existente",
-      });
-    }
+    const { name, taskIds } = req.body;
 
     const idsUnicos = [...new Set(taskIds || [])];
 
-    for (const id of idsUnicos) {
-      const existeTask = await Task.findByPk(id);
-      if (!existeTask) {
-        return res.status(404).json({
-          message: `La tarea con id ${id} no existe`,
-        });
-      }
-    }
-
-    const nuevoTag = await Tag.create({ name: name.trim() });
+    const nuevoTag = await Tag.create({ name });
 
     await nuevoTag.addTasks(idsUnicos);
 
