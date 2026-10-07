@@ -31,6 +31,7 @@ const Task = sequelize.define(
 
   {
     timestamps: false,
+    paranoid:true,
   },
 );
 

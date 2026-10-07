@@ -1,3 +1,4 @@
+import { matchedData } from "express-validator";
 import Task from "../models/task.models.js";
 import User from "../models/user.models.js";
 
@@ -65,15 +66,11 @@ export const getTaskById = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, isComplete } = req.body ?? {};
+    const datos = matchedData(req, { locations: ["body"] });
 
     const task = await Task.findByPk(id);
 
-    if (title !== undefined) task.title = title;
-    if (description !== undefined) task.description = description;
-    if (isComplete !== undefined) task.isComplete = isComplete;
-
-    await task.save();
+    await task.update(datos);
 
     return res.status(200).json({
       message: "Tarea actualizada exitosamente",

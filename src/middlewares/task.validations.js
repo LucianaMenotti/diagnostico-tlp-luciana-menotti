@@ -28,7 +28,7 @@ export const createTaskValidations = [
     .withMessage("title debe tener maximo 100 caracteres")
     .bail()
     .custom(async (title) => {
-      const existe = await Task.findOne({ where: { title } });
+      const existe = await Task.findOne({ where: { title }, paranoid: false });
       if (existe) {
         throw new Error("Title existente");
       }
@@ -84,7 +84,7 @@ export const updateTaskValidations = [
     .withMessage("title debe tener maximo 100 caracteres")
     .bail()
     .custom(async (title, { req }) => {
-      const existe = await Task.findOne({ where: { title } });
+      const existe = await Task.findOne({ where: { title }, paranoid: false });
       if (existe && existe.id !== Number(req.params.id)) {
         throw new Error("Title existente");
       }
@@ -124,3 +124,5 @@ export const updateTaskValidations = [
     .bail()
     .toBoolean(),
 ];
+
+//(cambia solo paranoid: false en los dos findOne de title)
