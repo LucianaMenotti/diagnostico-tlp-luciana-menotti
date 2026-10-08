@@ -158,16 +158,6 @@ Fuente: README oficial de dotenv, sección Usage (formato del mensaje `injected 
 - Se leen con `process.env.NOMBRE`.
 - El archivo `.env` no se sube a GitHub. El archivo `.env.example` sí.
 
-## Fuentes
-
-1. motdotla. dotenv (README oficial). GitHub. https://github.com/motdotla/dotenv. Consultado el 6 de octubre de 2026.
-   - Introducción: qué es dotenv y su base en The Twelve-Factor App.
-   - Usage: instalación, formato del `.env`, carga y lectura de variables, mensaje `injected env`.
-   - Advanced (ES6): uso con `import`.
-   - Docs, Config, Options: `path`, `quiet`, `debug` y `override`.
-   - FAQ: no subir el `.env`, orden de los `import`, variables ya definidas y reglas de lectura del archivo.
-2. Archivos de este proyecto: `.env.example`, `.gitignore`, `package.json`, `src/config/database.js` y `app.js`.
-
 ## Relaciones entre modelos
 
 ### User y Task: uno a muchos
