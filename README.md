@@ -189,3 +189,7 @@ Una tarea puede tener varias etiquetas. Una etiqueta puede estar en varias tarea
 - Un usuario no puede tener más de un perfil.
 - El nombre de una etiqueta es único.
 - Si al crear una etiqueta se envían tareas, todas deben existir.
+
+##Instalación e Integración de Dependencias 
+- Para levantar el servidor base, configurar seguridad y conectar con MySQL a través del ORM Sequelize, se instalan todas las dependencias fundamentales en un solo comando:
+  - npm install express cors cookie-parser dotenv sequelize mysql2 jsonwebtoken bcryptjs 
